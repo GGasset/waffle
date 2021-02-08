@@ -15,10 +15,37 @@ namespace Spotifly
         {
             //Detects if enter is pressed
             if (Convert.ToInt32(e.KeyChar) == 13)
-                LoadVideo();
+                LoadVideo(LinkTextBox.Text);
         }
 
-        private async void LoadVideo()
+        private async void GetVideo(string url)
+        {
+            try
+            {
+                currentLink = url;
+                if (currentLink.Contains("&"))
+                    currentLink = currentLink.Remove(currentLink.LastIndexOf('&'));
+                if (currentLink.Contains("="))
+                    currentLink = currentLink.Remove(0, currentLink.IndexOf('=') + 1);
+
+                video = await client.Videos.GetAsync(url).ConfigureAwait(true);
+            }
+            catch (System.Net.Http.HttpRequestException ex)
+            {
+                MessageBox.Show(ex.Message + " Please check your internet connection", (string)table["er"]);
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message + " Please enter a valid link or ID", (string)table["er"]);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, (string)table["er"]);
+            }
+            
+        }
+
+        private void LoadVideo(string url)
         {
             if (downloading)
             {
@@ -26,26 +53,7 @@ namespace Spotifly
                 return;
             }
             DwnldSttsLabel.Text = string.Empty;
-            try
-            {
-                video = await client.Videos.GetAsync(LinkTextBox.Text).ConfigureAwait(true);
-            }
-            catch (System.Net.Http.HttpRequestException ex)
-            {
-                MessageBox.Show(ex.Message + " Please check your internet connection", (string)table["er"]);
-                return;
-            }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message + " Please enter a valid link or ID", (string)table["er"]);
-                return;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, (string)table["er"]);
-                return;
-            }
-            currentLink = LinkTextBox.Text;
+            GetVideo(url);
 
             #region setPageInfo
 
@@ -67,7 +75,21 @@ namespace Spotifly
             AudioDwnldBttn.Visible = true;
 
             #endregion setPageInfo
+        }
 
+        private void BrowseBttn_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+
+        private void BrowseBttn_DragDrop(object sender, DragEventArgs e)
+        {
+            if (!loading)
+            {
+                SetActivePanel(2);
+                LinkTextBox.Text = e.Data.GetData(DataFormats.Text).ToString();
+                LoadVideo(LinkTextBox.Text);
+            }
         }
 
         private void LinkTextBox_DragEnter(object sender, DragEventArgs e)
@@ -79,12 +101,17 @@ namespace Spotifly
         {
             if (!loading)
             {
-                LinkTextBox.Text = e.Data.GetData(DataFormats.Text).ToString();
-                LoadVideo();
+                string droppedData = e.Data.GetData(DataFormats.Text).ToString();
+                LinkTextBox.Text = droppedData;
+                LoadVideo(LinkTextBox.Text);
+                if (panels[2] == YoutubeBrowserPanel && droppedData.Contains(initialBrowserUrl) && droppedData != initialBrowserUrl)
+                    WebBrowser.Load(droppedData);
+                else
+                    LoadVideo(LinkTextBox.Text);
             }
         }
 
-        private async void VideoDwnldBttn_Click(object sender, EventArgs e)
+        private async void DownloadVideo(string link, bool onlyAudio = false)
         {
             if (downloading)
             {
@@ -95,21 +122,28 @@ namespace Spotifly
             {
                 downloading = true;
                 DwnldSttsLabel.Text = (string)table["preparing"];
-                var streamManifest = await client.Videos.Streams.GetManifestAsync(currentLink.Remove(0, currentLink.IndexOf('=') + 1)).ConfigureAwait(true);
-                var streamInfo = streamManifest.GetMuxed().WithHighestVideoQuality();
-                string videoName = video.Title.Replace("\"", " ").Replace("<", " ").Replace(">", " ").Replace("|", " ").Replace("...", " ").Replace("*", " ");
+                WebDwnldSttsLabel.Text = (string)table["preparing"];
+                var streamManifest = await client.Videos.Streams.GetManifestAsync(link).ConfigureAwait(true);
+                IStreamInfo streamInfo;
+                if (onlyAudio)
+                    streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
+                else
+                    streamInfo = streamManifest.GetMuxed().WithHighestVideoQuality();
+                string videoName = video.Title.Replace("\"", " ").Replace("<", " ").Replace(">", " ").Replace("|", " ").Replace("...", " ").Replace("*", " ").Replace("/", " ")
+                    .Replace("?", "").Replace("¿", "");
                 for (int i = 0; true; i++)
-                {
                     if (File.Exists($@"{folderPath}\{videoName}.{streamInfo.Container}"))
                         videoName = video.Title + i;
                     else
                         break;
-                }
+
                 if (streamInfo != null)
                 {
                     DwnldSttsLabel.Text = (string)table["download"];
+                    WebDwnldSttsLabel.Text = (string)table["download"];
                     await client.Videos.Streams.DownloadAsync(streamInfo, $@"{folderPath}\{videoName}.{streamInfo.Container}").ConfigureAwait(true);
-                    DwnldSttsLabel.Text = (string)table["finished"];
+                    MediaListView_DrawMedia(true);
+                    SetShuffleBttn(shuffle);
                 }
                 else
                 {
@@ -133,60 +167,19 @@ namespace Spotifly
             finally
             {
                 downloading = false;
+                DwnldSttsLabel.Text = (string)table["finished"];
+                WebDwnldSttsLabel.Text = (string)table["finished"];
             }
         }
 
-        private async void AudioDwnldBttn_Click(object sender, EventArgs e)
+        private void VideoDwnldBttn_Click(object sender, EventArgs e)
         {
-            if (downloading)
-            {
-                MessageBox.Show((string)table["wait"], (string)table["er"]);
-                return;
-            }
-            try
-            {
-                downloading = true;
-                DwnldSttsLabel.Text = (string)table["preparing"];
-                string audioName = video.Title + " audio";
-                audioName = audioName.Replace("\"", " ").Replace("<", " ").Replace(">", " ").Replace("|", " ").Replace("...", " ").Replace("*", " ");
-                var streamManifest = await client.Videos.Streams.GetManifestAsync(currentLink.Remove(0, currentLink.IndexOf('=') + 1)).ConfigureAwait(true);
-                var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
-                for (int i = 0; true; i++)
-                {
-                    if (File.Exists($@"{folderPath}\{audioName}.{streamInfo.Container}"))
-                        audioName = video.Title + i;
-                    else
-                        break;
-                }
-                if (streamInfo != null)
-                {
-                    DwnldSttsLabel.Text = (string)table["download"];
-                    await client.Videos.Streams.DownloadAsync(streamInfo, $@"{folderPath}\{audioName}.{streamInfo.Container}").ConfigureAwait(true);
-                    DwnldSttsLabel.Text = (string)table["finished"];
-                }
-                else
-                {
-                    MessageBox.Show((string)table["getEr"], (string)table["er"]);
-                    downloading = false;
-                    return;
-                }
-            }
-            catch (DirectoryNotFoundException)
-            {
-                MessageBox.Show((string)table["path"], (string)table["er"]);
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                MessageBox.Show((string)table["internet"], (string)table["er"]);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, (string)table["er"]);
-            }
-            finally
-            {
-                downloading = false;
-            }
+            DownloadVideo(currentLink);
+        }
+
+        private void AudioDwnldBttn_Click(object sender, EventArgs e)
+        {
+            DownloadVideo(currentLink, true);
         }
     }
 }
