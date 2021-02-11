@@ -66,7 +66,7 @@
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>CA008842040C967FDB3089AC0C5A4A0CC6C7E0C1</ManifestCertificateThumbprint>
@@ -150,6 +150,7 @@
     <Compile Include="Settings.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Settings1.cs" />
     <Compile Include="Theme.cs">
       <SubType>Form</SubType>
     </Compile>
