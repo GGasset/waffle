@@ -6,10 +6,6 @@ namespace Spotifly
 {
     public partial class Form1
     {
-        private class Themes
-        {
-        }
-
         private class DarkTheme
         {
             public const string ThemeString = "DarkTheme";
@@ -30,9 +26,10 @@ namespace Spotifly
             public const string ThemeString = "LightTheme";
 
             public readonly static Color
-                BackColor = SystemColors.Control,
+                BackColor = SystemColors.ControlLightLight,
                 ForeColor = SystemColors.ControlText,
-                HighlightedForeColor = SystemColors.ControlDark,
+                ControlPanelBackColor = SystemColors.Control,
+                HighlightedForeColor = SystemColors.ControlDarkDark,
                 ButtonColor = Color.Black;
 
             public readonly static Brush
@@ -59,6 +56,10 @@ namespace Spotifly
                     ChangeControlAndAllChildControlsColor(ControlPanel, DarkTheme.ControlPanelBackColor, foreColor);
                     break;
 
+                case LightTheme.ThemeString:
+                    ChangeControlAndAllChildControlsColor(ControlPanel, LightTheme.ControlPanelBackColor, foreColor);
+                    break;
+
                 default:
                     break;
             }
@@ -67,13 +68,13 @@ namespace Spotifly
 
         private static Image SubstituteNotBlankFromImage(Image image, Color newColor)
         {
-            Color colorn1 = Color.Black, color, color1 = Color.White;
+            Color color;
             Bitmap bitmap = new Bitmap(image);
             for (int x = 0; x < bitmap.Width; x++)
                 for (int y = 0; y < bitmap.Height; y++)
                 {
                     color = bitmap.GetPixel(x, y);
-                    if (color.ToArgb() != 0 && color != Color.Transparent)
+                    if (color.A != 0 && color != Color.Transparent)
                         bitmap.SetPixel(x, y, newColor);
                 }
 
@@ -106,7 +107,7 @@ namespace Spotifly
                     break;
 
                 default:
-                    throw new Exception("Theme doesn't exist");
+                    throw new ArgumentException("Theme doesn't exist");
             }
         }
 

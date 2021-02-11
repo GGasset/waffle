@@ -83,7 +83,7 @@ namespace Spotifly
             if (value)
                 ShufflePlaylist();
             else
-                MediaListView_DrawMedia();
+                MediaListView_DrawMedia(true);
         }
 
         private void ShufflePlaylist()
@@ -162,7 +162,7 @@ namespace Spotifly
             else
                 output += $"0{remainingSeconds}";
             return output;
-            //return $"-{(remainingMinutes < 10 ? $"0{remainingMinutes}" : $"{remainingMinutes}")}:{(remainingSeconds < 10 ? $"0{remainingSeconds}" : $"{remainingSeconds}")}"; Doesn't show remaining hours if needed
+            //return $"-{(remainingMinutes < 10 ? $"0{remainingMinutes}" : $"{remainingMinutes}")}:{(remainingSeconds < 10 ? $"0{remainingSeconds}" : $"{remainingSeconds}")}";// Doesn't show remaining hours if needed
         }
 
         private Brush progressBarBrush = Brushes.White;

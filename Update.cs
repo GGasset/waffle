@@ -13,12 +13,12 @@ namespace Spotifly
         private readonly int slowUpdateFreq = 27, midUpdateFreq = 5;
         private readonly Timer timer = new Timer();
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Timer will dispose onFormClosing but this doesn't detect it XD")]
         private void UpdatesStart()
         {
             timer.Interval = 100;
             timer.Tick += Update;
             timer.Start();
+            axWindowsMediaPlayer.settings.volume = Properties.Settings.Default.LastSessionVolume;
         }
 
         private void Update(object sender, EventArgs e)
@@ -55,6 +55,8 @@ namespace Spotifly
             try
             {
                 SetProgressBarValueForCurrentMediaPos();
+                string elapsedTime = showRemainingTimeInElapsed ? GetRemainingTimeString() : axWindowsMediaPlayer.Ctlcontrols.currentPositionString;
+                ElapsedTimeLabel.Text = string.IsNullOrWhiteSpace(elapsedTime) || string.IsNullOrWhiteSpace(axWindowsMediaPlayer.URL) ? "00:00" : elapsedTime;
             }
             catch
             { }
@@ -77,13 +79,13 @@ namespace Spotifly
                     SetFormSizeForCurrentMedia();
                 }
 
-                string elapsedTime = showRemainingTimeInElapsed ? GetRemainingTimeString() : axWindowsMediaPlayer.Ctlcontrols.currentPositionString;
-                ElapsedTimeLabel.Text = string.IsNullOrWhiteSpace(elapsedTime) || string.IsNullOrWhiteSpace(axWindowsMediaPlayer.URL) ? "00:00" : elapsedTime;
                 VolumeTrackBar.Value = axWindowsMediaPlayer.settings.volume;
                 MediaLengthLabel.Location = new Point(Width - (initialMediaLengthLabelDistanceToFormEnd + MediaLengthLabel.Width), MediaLengthLabel.Location.Y);
 
+                CheckPlaylistIndex();
                 string currentName = GetCurrentMediaName();
-                CurrentMediaTxtBox.Text = currentName;
+                if (currentName != CurrentMediaTxtBox.Text)
+                    CurrentMediaTxtBox.Text = currentName;
 
                 GetColorsForTheme(currentTheme, out _, out _, out _, out Color ButtonColor, out _);
                 if (axWindowsMediaPlayer.playState == WMPPlayState.wmppsReady || axWindowsMediaPlayer.playState == WMPPlayState.wmppsPaused || axWindowsMediaPlayer.playState == WMPPlayState.wmppsStopped ||
@@ -93,6 +95,15 @@ namespace Spotifly
                     PlayBttn.Image = SubstituteNotBlankFromImage(Properties.Resources.Pause, ButtonColor);
 
                 MediaLengthLabel.Text = axWindowsMediaPlayer.currentMedia.durationString;
+
+                EnableTabIndex(activePanelIndex != 0);
+                void EnableTabIndex(bool value)
+                {
+                    foreach (Control formControl in MainForm.Controls)
+                        foreach (Control control in formControl.Controls)
+                            control.TabStop = value;
+                    PlayBttn.TabStop = true;
+                }
             }
             catch
             { }

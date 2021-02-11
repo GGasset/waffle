@@ -45,6 +45,8 @@
             this.ResizeForMediaCheckBox = new System.Windows.Forms.CheckBox();
             this.AboutBttn = new System.Windows.Forms.Button();
             this.DownloadedMediaPanel = new System.Windows.Forms.Panel();
+            this.SongCountLabel = new System.Windows.Forms.Label();
+            this.OpenCurrentFldrBttn = new System.Windows.Forms.Button();
             this.BackBttn = new System.Windows.Forms.Button();
             this.MediaListView = new System.Windows.Forms.ListView();
             this.folderLabel = new System.Windows.Forms.Label();
@@ -70,6 +72,10 @@
             this.LoadingPanel = new System.Windows.Forms.Panel();
             this.LoadImage = new System.Windows.Forms.PictureBox();
             this.YoutubeBrowserPanel = new System.Windows.Forms.Panel();
+            this.DownloadGroupBox = new System.Windows.Forms.GroupBox();
+            this.WebDwnldSttsLabel = new System.Windows.Forms.Label();
+            this.WebAudioDwnldBttn = new System.Windows.Forms.Button();
+            this.WebVideoDwnldBtnn = new System.Windows.Forms.Button();
             this.ControlPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ElapsedTimeBarPictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VolumeTrackBar)).BeginInit();
@@ -82,6 +88,8 @@
             this.PanelGroupBox.SuspendLayout();
             this.LoadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LoadImage)).BeginInit();
+            this.YoutubeBrowserPanel.SuspendLayout();
+            this.DownloadGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // ControlPanel
@@ -99,9 +107,9 @@
             this.ControlPanel.Controls.Add(this.MediaLengthLabel);
             this.ControlPanel.Controls.Add(this.ElapsedTimeLabel);
             this.ControlPanel.Controls.Add(this.PlayBttn);
-            this.ControlPanel.Location = new System.Drawing.Point(0, 433);
+            this.ControlPanel.Location = new System.Drawing.Point(0, 440);
             this.ControlPanel.Name = "ControlPanel";
-            this.ControlPanel.Size = new System.Drawing.Size(906, 75);
+            this.ControlPanel.Size = new System.Drawing.Size(912, 75);
             this.ControlPanel.TabIndex = 1;
             this.ControlPanel.TabStop = false;
             // 
@@ -113,7 +121,7 @@
             this.ElapsedTimeBarPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ElapsedTimeBarPictureBox.Location = new System.Drawing.Point(7, 12);
             this.ElapsedTimeBarPictureBox.Name = "ElapsedTimeBarPictureBox";
-            this.ElapsedTimeBarPictureBox.Size = new System.Drawing.Size(884, 10);
+            this.ElapsedTimeBarPictureBox.Size = new System.Drawing.Size(890, 10);
             this.ElapsedTimeBarPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.ElapsedTimeBarPictureBox.TabIndex = 12;
             this.ElapsedTimeBarPictureBox.TabStop = false;
@@ -128,7 +136,7 @@
             this.ShuffleBttn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ShuffleBttn.Image = global::Spotifly.Properties.Resources.Shuffle_Image;
             this.ShuffleBttn.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.ShuffleBttn.Location = new System.Drawing.Point(577, 27);
+            this.ShuffleBttn.Location = new System.Drawing.Point(580, 27);
             this.ShuffleBttn.Name = "ShuffleBttn";
             this.ShuffleBttn.Size = new System.Drawing.Size(58, 38);
             this.ShuffleBttn.TabIndex = 7;
@@ -155,7 +163,7 @@
             // 
             this.VolumeTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.VolumeTrackBar.BackColor = System.Drawing.SystemColors.Control;
-            this.VolumeTrackBar.Location = new System.Drawing.Point(734, 23);
+            this.VolumeTrackBar.Location = new System.Drawing.Point(740, 23);
             this.VolumeTrackBar.Maximum = 100;
             this.VolumeTrackBar.MaximumSize = new System.Drawing.Size(104, 25);
             this.VolumeTrackBar.Name = "VolumeTrackBar";
@@ -172,7 +180,7 @@
             this.NextMediaBttn.FlatAppearance.BorderSize = 0;
             this.NextMediaBttn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.NextMediaBttn.Image = global::Spotifly.Properties.Resources.Advance;
-            this.NextMediaBttn.Location = new System.Drawing.Point(508, 24);
+            this.NextMediaBttn.Location = new System.Drawing.Point(511, 24);
             this.NextMediaBttn.Name = "NextMediaBttn";
             this.NextMediaBttn.Size = new System.Drawing.Size(45, 45);
             this.NextMediaBttn.TabIndex = 6;
@@ -188,7 +196,7 @@
             this.PrevMediaBttn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PrevMediaBttn.ForeColor = System.Drawing.SystemColors.ControlText;
             this.PrevMediaBttn.Image = global::Spotifly.Properties.Resources.Previous;
-            this.PrevMediaBttn.Location = new System.Drawing.Point(343, 24);
+            this.PrevMediaBttn.Location = new System.Drawing.Point(346, 24);
             this.PrevMediaBttn.Name = "PrevMediaBttn";
             this.PrevMediaBttn.Size = new System.Drawing.Size(45, 45);
             this.PrevMediaBttn.TabIndex = 4;
@@ -201,7 +209,7 @@
             this.FullScreenBttn.BackColor = System.Drawing.Color.Transparent;
             this.FullScreenBttn.FlatAppearance.BorderSize = 0;
             this.FullScreenBttn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.FullScreenBttn.Location = new System.Drawing.Point(844, 44);
+            this.FullScreenBttn.Location = new System.Drawing.Point(850, 44);
             this.FullScreenBttn.Name = "FullScreenBttn";
             this.FullScreenBttn.Size = new System.Drawing.Size(56, 23);
             this.FullScreenBttn.TabIndex = 7;
@@ -214,7 +222,7 @@
             this.MediaLengthLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.MediaLengthLabel.AutoSize = true;
             this.MediaLengthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MediaLengthLabel.Location = new System.Drawing.Point(860, 28);
+            this.MediaLengthLabel.Location = new System.Drawing.Point(866, 28);
             this.MediaLengthLabel.Name = "MediaLengthLabel";
             this.MediaLengthLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.MediaLengthLabel.Size = new System.Drawing.Size(34, 13);
@@ -242,10 +250,10 @@
             this.PlayBttn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.PlayBttn.ForeColor = System.Drawing.Color.Transparent;
             this.PlayBttn.Image = global::Spotifly.Properties.Resources.Playy;
-            this.PlayBttn.Location = new System.Drawing.Point(430, 24);
+            this.PlayBttn.Location = new System.Drawing.Point(433, 24);
             this.PlayBttn.Name = "PlayBttn";
             this.PlayBttn.Size = new System.Drawing.Size(45, 45);
-            this.PlayBttn.TabIndex = 5;
+            this.PlayBttn.TabIndex = 0;
             this.PlayBttn.UseVisualStyleBackColor = false;
             this.PlayBttn.Click += new System.EventHandler(this.PlayBttn_Click);
             // 
@@ -260,7 +268,7 @@
             this.SettingsPanel.Controls.Add(this.AboutBttn);
             this.SettingsPanel.Location = new System.Drawing.Point(12, 168);
             this.SettingsPanel.Name = "SettingsPanel";
-            this.SettingsPanel.Size = new System.Drawing.Size(99, 93);
+            this.SettingsPanel.Size = new System.Drawing.Size(105, 100);
             this.SettingsPanel.TabIndex = 3;
             this.SettingsPanel.Visible = false;
             // 
@@ -288,7 +296,7 @@
             // AboutBttn
             // 
             this.AboutBttn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.AboutBttn.Location = new System.Drawing.Point(15, 58);
+            this.AboutBttn.Location = new System.Drawing.Point(15, 65);
             this.AboutBttn.Name = "AboutBttn";
             this.AboutBttn.Size = new System.Drawing.Size(75, 23);
             this.AboutBttn.TabIndex = 0;
@@ -302,16 +310,50 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.DownloadedMediaPanel.BackColor = System.Drawing.Color.Transparent;
+            this.DownloadedMediaPanel.Controls.Add(this.SongCountLabel);
+            this.DownloadedMediaPanel.Controls.Add(this.OpenCurrentFldrBttn);
             this.DownloadedMediaPanel.Controls.Add(this.BackBttn);
             this.DownloadedMediaPanel.Controls.Add(this.MediaListView);
             this.DownloadedMediaPanel.Controls.Add(this.folderLabel);
-            this.DownloadedMediaPanel.Location = new System.Drawing.Point(6, 366);
+            this.DownloadedMediaPanel.Location = new System.Drawing.Point(141, 12);
             this.DownloadedMediaPanel.Name = "DownloadedMediaPanel";
-            this.DownloadedMediaPanel.Size = new System.Drawing.Size(102, 73);
+            this.DownloadedMediaPanel.Size = new System.Drawing.Size(740, 418);
             this.DownloadedMediaPanel.TabIndex = 3;
             this.DownloadedMediaPanel.Visible = false;
             this.DownloadedMediaPanel.VisibleChanged += new System.EventHandler(this.DownloadedMediaPanel_VisibleChanged);
             this.DownloadedMediaPanel.Resize += new System.EventHandler(this.DownloadedMediaPanel_Resize);
+            // 
+            // SongCountLabel
+            // 
+            this.SongCountLabel.AutoSize = true;
+            this.SongCountLabel.Location = new System.Drawing.Point(-3, 18);
+            this.SongCountLabel.Name = "SongCountLabel";
+            this.SongCountLabel.Size = new System.Drawing.Size(63, 13);
+            this.SongCountLabel.TabIndex = 7;
+            this.SongCountLabel.Text = "Song Count";
+            // 
+            // OpenCurrentFldrBttn
+            // 
+            this.OpenCurrentFldrBttn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.OpenCurrentFldrBttn.BackColor = System.Drawing.Color.Transparent;
+            this.OpenCurrentFldrBttn.FlatAppearance.BorderColor = System.Drawing.Color.DimGray;
+            this.OpenCurrentFldrBttn.FlatAppearance.BorderSize = 0;
+            this.OpenCurrentFldrBttn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.OpenCurrentFldrBttn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.OpenCurrentFldrBttn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.OpenCurrentFldrBttn.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.OpenCurrentFldrBttn.Location = new System.Drawing.Point(616, 3);
+            this.OpenCurrentFldrBttn.Name = "OpenCurrentFldrBttn";
+            this.OpenCurrentFldrBttn.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.OpenCurrentFldrBttn.Size = new System.Drawing.Size(110, 20);
+            this.OpenCurrentFldrBttn.TabIndex = 6;
+            this.OpenCurrentFldrBttn.Text = "Open Current Folder";
+            this.OpenCurrentFldrBttn.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.OpenCurrentFldrBttn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.OpenCurrentFldrBttn.UseVisualStyleBackColor = false;
+            this.OpenCurrentFldrBttn.Click += new System.EventHandler(this.OpenCurrentFldrBttn_Click);
+            this.OpenCurrentFldrBttn.MouseEnter += new System.EventHandler(this.OpenCurrentFldrBttn_MouseEnter);
+            this.OpenCurrentFldrBttn.MouseLeave += new System.EventHandler(this.OpenCurrentFldrBttn_MouseLeave);
             // 
             // BackBttn
             // 
@@ -323,9 +365,9 @@
             this.BackBttn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
             this.BackBttn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BackBttn.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.BackBttn.Location = new System.Drawing.Point(-42, 3);
+            this.BackBttn.Location = new System.Drawing.Point(517, 3);
             this.BackBttn.Name = "BackBttn";
-            this.BackBttn.Size = new System.Drawing.Size(140, 20);
+            this.BackBttn.Size = new System.Drawing.Size(93, 20);
             this.BackBttn.TabIndex = 5;
             this.BackBttn.Text = "Back";
             this.BackBttn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -336,16 +378,15 @@
             // 
             // MediaListView
             // 
-            this.MediaListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.MediaListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MediaListView.BackColor = System.Drawing.SystemColors.Control;
             this.MediaListView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.MediaListView.GridLines = true;
             this.MediaListView.HideSelection = false;
-            this.MediaListView.Location = new System.Drawing.Point(0, 25);
+            this.MediaListView.Location = new System.Drawing.Point(0, 34);
             this.MediaListView.Name = "MediaListView";
-            this.MediaListView.Size = new System.Drawing.Size(102, 47);
+            this.MediaListView.Size = new System.Drawing.Size(740, 384);
             this.MediaListView.TabIndex = 1;
             this.MediaListView.UseCompatibleStateImageBehavior = false;
             this.MediaListView.View = System.Windows.Forms.View.List;
@@ -368,20 +409,18 @@
             this.MediaPlayerPanel.Controls.Add(this.axWindowsMediaPlayer);
             this.MediaPlayerPanel.Location = new System.Drawing.Point(4, 269);
             this.MediaPlayerPanel.Name = "MediaPlayerPanel";
-            this.MediaPlayerPanel.Size = new System.Drawing.Size(39, 28);
+            this.MediaPlayerPanel.Size = new System.Drawing.Size(45, 35);
             this.MediaPlayerPanel.TabIndex = 3;
             this.MediaPlayerPanel.Visible = false;
             // 
             // axWindowsMediaPlayer
             // 
-            this.axWindowsMediaPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.axWindowsMediaPlayer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.axWindowsMediaPlayer.Enabled = true;
             this.axWindowsMediaPlayer.Location = new System.Drawing.Point(0, 0);
             this.axWindowsMediaPlayer.Name = "axWindowsMediaPlayer";
             this.axWindowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer.OcxState")));
-            this.axWindowsMediaPlayer.Size = new System.Drawing.Size(39, 28);
+            this.axWindowsMediaPlayer.Size = new System.Drawing.Size(45, 35);
             this.axWindowsMediaPlayer.TabIndex = 1;
             this.axWindowsMediaPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.WindowsMediaPlayer_PlayStateChange);
             this.axWindowsMediaPlayer.MediaChange += new AxWMPLib._WMPOCXEvents_MediaChangeEventHandler(this.WindowsMediaPlayer_MediaChange);
@@ -404,9 +443,9 @@
             this.BrowserPanel.Controls.Add(this.ThumbnailPicture);
             this.BrowserPanel.Controls.Add(this.LinkTextBox);
             this.BrowserPanel.Controls.Add(this.label1);
-            this.BrowserPanel.Location = new System.Drawing.Point(5, 303);
+            this.BrowserPanel.Location = new System.Drawing.Point(94, 339);
             this.BrowserPanel.Name = "BrowserPanel";
-            this.BrowserPanel.Size = new System.Drawing.Size(93, 44);
+            this.BrowserPanel.Size = new System.Drawing.Size(23, 24);
             this.BrowserPanel.TabIndex = 2;
             this.BrowserPanel.Visible = false;
             // 
@@ -473,7 +512,7 @@
             this.DescriptionTextBox.Name = "DescriptionTextBox";
             this.DescriptionTextBox.ReadOnly = true;
             this.DescriptionTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.DescriptionTextBox.Size = new System.Drawing.Size(82, 0);
+            this.DescriptionTextBox.Size = new System.Drawing.Size(12, 0);
             this.DescriptionTextBox.TabIndex = 8;
             this.DescriptionTextBox.Text = "Description";
             this.DescriptionTextBox.Visible = false;
@@ -499,7 +538,7 @@
             this.TitleTextBox.Location = new System.Drawing.Point(6, 228);
             this.TitleTextBox.Name = "TitleTextBox";
             this.TitleTextBox.ReadOnly = true;
-            this.TitleTextBox.Size = new System.Drawing.Size(82, 22);
+            this.TitleTextBox.Size = new System.Drawing.Size(12, 22);
             this.TitleTextBox.TabIndex = 6;
             this.TitleTextBox.Text = "Title";
             // 
@@ -561,6 +600,7 @@
             // 
             // BrowseBttn
             // 
+            this.BrowseBttn.AllowDrop = true;
             this.BrowseBttn.BackColor = System.Drawing.Color.Transparent;
             this.BrowseBttn.FlatAppearance.BorderColor = System.Drawing.SystemColors.Control;
             this.BrowseBttn.FlatAppearance.BorderSize = 0;
@@ -572,10 +612,12 @@
             this.BrowseBttn.Size = new System.Drawing.Size(123, 26);
             this.BrowseBttn.TabIndex = 2;
             this.BrowseBttn.Text = "Browse";
-            this.BrowseBttn.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.BrowseBttn.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.BrowseBttn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.BrowseBttn.UseVisualStyleBackColor = false;
             this.BrowseBttn.Click += new System.EventHandler(this.BrowseBttn_Click);
+            this.BrowseBttn.DragDrop += new System.Windows.Forms.DragEventHandler(this.BrowseBttn_DragDrop);
+            this.BrowseBttn.DragEnter += new System.Windows.Forms.DragEventHandler(this.BrowseBttn_DragEnter);
             this.BrowseBttn.MouseEnter += new System.EventHandler(this.Button2_MouseEnter);
             this.BrowseBttn.MouseLeave += new System.EventHandler(this.Button2_MouseLeave);
             // 
@@ -605,7 +647,7 @@
             this.MediaPlayerBttn.Location = new System.Drawing.Point(6, 8);
             this.MediaPlayerBttn.Name = "MediaPlayerBttn";
             this.MediaPlayerBttn.Size = new System.Drawing.Size(123, 29);
-            this.MediaPlayerBttn.TabIndex = 0;
+            this.MediaPlayerBttn.TabIndex = 1;
             this.MediaPlayerBttn.Text = "Media Player";
             this.MediaPlayerBttn.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.MediaPlayerBttn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -630,7 +672,7 @@
             this.SettingsBttn.Size = new System.Drawing.Size(123, 28);
             this.SettingsBttn.TabIndex = 3;
             this.SettingsBttn.Text = "Settings";
-            this.SettingsBttn.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.SettingsBttn.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.SettingsBttn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.SettingsBttn.UseVisualStyleBackColor = false;
             this.SettingsBttn.Click += new System.EventHandler(this.SettingsBttn_Click);
@@ -660,17 +702,66 @@
             // 
             // YoutubeBrowserPanel
             // 
-            this.YoutubeBrowserPanel.Location = new System.Drawing.Point(141, 12);
+            this.YoutubeBrowserPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.YoutubeBrowserPanel.Controls.Add(this.DownloadGroupBox);
+            this.YoutubeBrowserPanel.Location = new System.Drawing.Point(29, 352);
             this.YoutubeBrowserPanel.Name = "YoutubeBrowserPanel";
-            this.YoutubeBrowserPanel.Size = new System.Drawing.Size(740, 418);
+            this.YoutubeBrowserPanel.Size = new System.Drawing.Size(62, 90);
             this.YoutubeBrowserPanel.TabIndex = 4;
+            this.YoutubeBrowserPanel.Visible = false;
+            // 
+            // DownloadGroupBox
+            // 
+            this.DownloadGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.DownloadGroupBox.BackColor = System.Drawing.Color.Transparent;
+            this.DownloadGroupBox.Controls.Add(this.WebDwnldSttsLabel);
+            this.DownloadGroupBox.Controls.Add(this.WebAudioDwnldBttn);
+            this.DownloadGroupBox.Controls.Add(this.WebVideoDwnldBtnn);
+            this.DownloadGroupBox.Location = new System.Drawing.Point(-146, 13);
+            this.DownloadGroupBox.Name = "DownloadGroupBox";
+            this.DownloadGroupBox.Size = new System.Drawing.Size(210, 65);
+            this.DownloadGroupBox.TabIndex = 0;
+            this.DownloadGroupBox.TabStop = false;
+            this.DownloadGroupBox.Text = "Download";
+            this.DownloadGroupBox.Visible = false;
+            // 
+            // WebDwnldSttsLabel
+            // 
+            this.WebDwnldSttsLabel.AutoSize = true;
+            this.WebDwnldSttsLabel.Location = new System.Drawing.Point(13, 16);
+            this.WebDwnldSttsLabel.Name = "WebDwnldSttsLabel";
+            this.WebDwnldSttsLabel.Size = new System.Drawing.Size(86, 13);
+            this.WebDwnldSttsLabel.TabIndex = 2;
+            this.WebDwnldSttsLabel.Text = "Download status";
+            // 
+            // WebAudioDwnldBttn
+            // 
+            this.WebAudioDwnldBttn.Location = new System.Drawing.Point(115, 36);
+            this.WebAudioDwnldBttn.Name = "WebAudioDwnldBttn";
+            this.WebAudioDwnldBttn.Size = new System.Drawing.Size(75, 23);
+            this.WebAudioDwnldBttn.TabIndex = 1;
+            this.WebAudioDwnldBttn.Text = "Audio";
+            this.WebAudioDwnldBttn.UseVisualStyleBackColor = true;
+            this.WebAudioDwnldBttn.Click += new System.EventHandler(this.WebAudioDwnldBttn_Click);
+            // 
+            // WebVideoDwnldBtnn
+            // 
+            this.WebVideoDwnldBtnn.Location = new System.Drawing.Point(16, 36);
+            this.WebVideoDwnldBtnn.Name = "WebVideoDwnldBtnn";
+            this.WebVideoDwnldBtnn.Size = new System.Drawing.Size(75, 23);
+            this.WebVideoDwnldBtnn.TabIndex = 0;
+            this.WebVideoDwnldBtnn.Text = "Video";
+            this.WebVideoDwnldBtnn.UseVisualStyleBackColor = true;
+            this.WebVideoDwnldBtnn.Click += new System.EventHandler(this.WebVideoDwnldBtnn_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(906, 508);
+            this.ClientSize = new System.Drawing.Size(912, 515);
             this.Controls.Add(this.YoutubeBrowserPanel);
             this.Controls.Add(this.LoadingPanel);
             this.Controls.Add(this.BrowseBttn);
@@ -681,8 +772,10 @@
             this.Controls.Add(this.ControlPanel);
             this.Controls.Add(this.BrowserPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(922, 547);
+            this.Location = new System.Drawing.Point(60, 60);
+            this.MinimumSize = new System.Drawing.Size(923, 554);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Spotifly";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -703,6 +796,9 @@
             this.PanelGroupBox.ResumeLayout(false);
             this.LoadingPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.LoadImage)).EndInit();
+            this.YoutubeBrowserPanel.ResumeLayout(false);
+            this.DownloadGroupBox.ResumeLayout(false);
+            this.DownloadGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -749,6 +845,12 @@
         private System.Windows.Forms.PictureBox ElapsedTimeBarPictureBox;
         private System.Windows.Forms.ComboBox ThemeSelectionComboBox;
         private System.Windows.Forms.Panel YoutubeBrowserPanel;
+        private System.Windows.Forms.GroupBox DownloadGroupBox;
+        private System.Windows.Forms.Button WebVideoDwnldBtnn;
+        private System.Windows.Forms.Button WebAudioDwnldBttn;
+        private System.Windows.Forms.Label WebDwnldSttsLabel;
+        private System.Windows.Forms.Button OpenCurrentFldrBttn;
+        private System.Windows.Forms.Label SongCountLabel;
     }
 }
 

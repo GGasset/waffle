@@ -1,4 +1,5 @@
-﻿using Spotifly.Properties;
+﻿using CefSharp.WinForms;
+using Spotifly.Properties;
 using System;
 using System.Collections;
 using System.Drawing;
@@ -11,17 +12,20 @@ namespace Spotifly
     public partial class Form1 : Form
     {
         internal Form MainForm { get => this; }
-        //internal DownloadForm downloadForm;
+
         private static string AppName { get => "Spotifly"; }
+
+        private readonly ChromiumWebBrowser WebBrowser;
         private readonly Size panelSize = new Size(740, 418), mediaPanelSize;
         private readonly Point panelLocation = new Point(141, 12), mediaPanelLocation;
         private Panel[] panels;
         private YoutubeExplode.Videos.Video video;
-        private string currentLink, folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos) + $@"\{AppName}";
+        private string currentLink, folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos) + $@"\{AppName}", currentUrlFolder;
+        private readonly string initialBrowserUrl = "https://www.youtube.com/";
         private readonly string initialFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos) + $@"\{AppName}";
         private bool downloading = false, isPlaying = false, shuffle, loading = true, showRemainingTimeInElapsed = Settings.Default.ShowRemainingTimeInElapsed;
         private string[] filteredFilesMemory = Array.Empty<string>(), foldersMemory = Array.Empty<string>(), urlPlaylist;
-        private int playlistIndex = 0, verticalModeMinWidth = 710, normalMinWidth = 922, verticalModeStart = 750;
+        private int playlistIndex = 0, activePanelIndex, verticalModeMinWidth = 710, normalMinWidth, verticalModeStart = 750;
         private readonly int initialMediaLengthLabelDistanceToFormEnd;
         private readonly Hashtable table = new Hashtable();
         private readonly Random random = new Random();
@@ -29,16 +33,26 @@ namespace Spotifly
         public Form1()
         {
             InitializeComponent();
+
+            normalMinWidth = MinimumSize.Width;
             initialMediaLengthLabelDistanceToFormEnd = Width - (MediaLengthLabel.Location.X + MediaLengthLabel.Width);
             mediaPanelLocation = new Point(PanelGroupBox.Width + PanelGroupBox.Location.X, 0);
-            mediaPanelSize = new Size(Width - panelLocation.X, ControlPanel.Location.Y + 6);
+            mediaPanelSize = new Size(Width - mediaPanelLocation.X, ControlPanel.Location.Y + 5);
+
+            WebBrowser = new ChromiumWebBrowser(initialBrowserUrl)
+            {
+                Parent = YoutubeBrowserPanel,
+                Dock = DockStyle.Fill,
+            };
+            WebBrowser.AddressChanged += WebBrowser_AddressChanged;
+            BrowseBttn.Parent = PanelGroupBox;
             ChangeTheme(currentTheme = Settings.Default.LastSessionTheme);
         }
 
         private async void Form1_Load(object sender, EventArgs e)
         {
             //Settings.Default.Reset();
-            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos) + $@"\{AppName}");
+            Directory.CreateDirectory(initialFolderPath);
             panels = new Panel[5];
             panels[0] = MediaPlayerPanel;
             panels[1] = DownloadedMediaPanel;
@@ -64,6 +78,8 @@ namespace Spotifly
 
             LoadingPanel.Size = panelSize;
             LoadingPanel.Location = panelLocation;
+            YoutubeBrowserPanel.Size = mediaPanelSize;
+            YoutubeBrowserPanel.Location = mediaPanelLocation;
             BrowserPanel.Size = panelSize;
             BrowserPanel.Location = panelLocation;
             DownloadedMediaPanel.Size = mediaPanelSize;
@@ -83,9 +99,16 @@ namespace Spotifly
             UploadDateLabel.Text = "";
             DescriptionTextBox.Text = "";
             DwnldSttsLabel.Text = "";
+            WebDwnldSttsLabel.Text = "";
 
             if (Settings.Default.LastSessionFolder.Length != 0 && Directory.Exists(Settings.Default.LastSessionFolder))
                 folderPath = Settings.Default.LastSessionFolder;
+
+            BackBttn.Visible = folderPath != initialFolderPath;
+
+            string lastSessionUrl = Settings.Default.lastSessionMediaURL;
+            if (File.Exists(lastSessionUrl))
+                currentUrlFolder = lastSessionUrl.Remove(lastSessionUrl.LastIndexOf('\\'));
 
             VolumeTrackBar.Value = Settings.Default.LastSessionVolume;
 
@@ -93,6 +116,7 @@ namespace Spotifly
                 FormBorderStyle = FormBorderStyle.FixedSingle;
             else
                 FormBorderStyle = FormBorderStyle.Sizable;
+            axWindowsMediaPlayer.stretchToFit = ResizeForMediaCheckBox.Checked;
 
             MediaListView_DrawMedia();
 
@@ -112,7 +136,6 @@ namespace Spotifly
                             }
                         PlayFile(urlPlaylist[playlistIndex]);
                     }
-                    axWindowsMediaPlayer.settings.volume = Settings.Default.LastSessionVolume;
                 }
                 catch { }
 
@@ -163,14 +186,14 @@ namespace Spotifly
                 return;
             MinimumSize = new Size(Convert.ToInt32(Height > verticalModeStart) * verticalModeMinWidth +
                        Convert.ToInt32(Height < verticalModeStart) * normalMinWidth, MinimumSize.Height);
-
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             timer.Dispose();
             progressBarBrush.Dispose();
-            if (!loading && e.CloseReason == CloseReason.UserClosing)
+            WebBrowser.Dispose();
+            if (!loading && e.CloseReason != CloseReason.TaskManagerClosing && e.CloseReason != CloseReason.None)
             {
                 Settings.Default.lastSessionMediaURL = urlPlaylist[playlistIndex];
                 Settings.Default.LastSessionTime = axWindowsMediaPlayer.Ctlcontrols.currentPosition;
@@ -191,6 +214,7 @@ namespace Spotifly
 
         private void SetActivePanel(int panelIndex)
         {
+            activePanelIndex = panelIndex;
             foreach (Panel panel in panels)
                 panel.Visible = ReferenceEquals(panel, panels[panelIndex]);
         }
@@ -208,31 +232,35 @@ namespace Spotifly
             catch
             { return; }
             Size minSize = mediaPanelSize, maxSize = new Size(1307, 1307), initialSizeDifference, imageSourceSize, mediaPlayerSize = new Size(), formSize;
-            int videoAspectRatio;
-            bool landscaped;
             initialSizeDifference = new Size(MainForm.MinimumSize.Width - mediaPanelSize.Width, MainForm.MinimumSize.Height - mediaPanelSize.Height);
             imageSourceSize = new Size(axWindowsMediaPlayer.currentMedia.imageSourceWidth, axWindowsMediaPlayer.currentMedia.imageSourceHeight);
 
-            if (landscaped = imageSourceSize.Width > imageSourceSize.Height)
-                videoAspectRatio = imageSourceSize.Width / imageSourceSize.Height;
-            else
-                videoAspectRatio = imageSourceSize.Height / imageSourceSize.Width;
-
-            if (landscaped)
+            double videoAspectRatio;
+            if (imageSourceSize.Width > imageSourceSize.Height)
             {
+                videoAspectRatio = imageSourceSize.Width / Convert.ToDouble(imageSourceSize.Height);
                 mediaPlayerSize.Height = SetBetwenBounds(new Size(0, axWindowsMediaPlayer.currentMedia.imageSourceHeight)).Height;
-                mediaPlayerSize.Width = mediaPlayerSize.Height * videoAspectRatio;
+                mediaPlayerSize.Width = Convert.ToInt32(mediaPlayerSize.Height * videoAspectRatio);
             }
             else
             {
+                videoAspectRatio = imageSourceSize.Height / Convert.ToDouble(imageSourceSize.Width);
                 mediaPlayerSize.Width = SetBetwenBounds(new Size(axWindowsMediaPlayer.currentMedia.imageSourceWidth, 0)).Width;
-                mediaPlayerSize.Height = mediaPlayerSize.Width * videoAspectRatio;
+                mediaPlayerSize.Height = Convert.ToInt32(mediaPlayerSize.Width * videoAspectRatio);
             }
-            mediaPlayerSize = new Size(mediaPanelSize.Width, mediaPlayerSize.Width * videoAspectRatio);
+            //mediaPlayerSize = new Size(mediaPanelSize.Width, (int)(mediaPlayerSize.Width * videoAspectRatio));
             formSize = new Size(mediaPlayerSize.Width + initialSizeDifference.Width, mediaPlayerSize.Height + initialSizeDifference.Height);
             Size = formSize;
 
-            Size SetBetwenBounds(Size size) => new Size(Math.Max(minSize.Width, Math.Min(maxSize.Width, size.Width)), Math.Max(Math.Min(maxSize.Height, size.Height), minSize.Height));
+            Size SetBetwenBounds(Size size) //=> new Size(Math.Max(minSize.Width, Math.Min(maxSize.Width, size.Width)), Math.Max(Math.Min(maxSize.Height, size.Height), minSize.Height));
+            {
+                Size output = new Size
+                {
+                    Width = Math.Max(minSize.Width, Math.Min(maxSize.Width, size.Width)),
+                    Height = Math.Max(minSize.Height, Math.Min(maxSize.Height, size.Height))
+                };
+                return output;
+            }
         }
 
         private void MediaPlayerBttn_Click(object sender, EventArgs e)
@@ -291,74 +319,75 @@ namespace Spotifly
         private void MediaPlayerBttn_MouseEnter(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out _, out Color color, out _, out _);
-            if (!loading)
-                MediaPlayerBttn.ForeColor = color;
+            MediaPlayerBttn.ForeColor = color;
         }
 
         private void SongsBttn_MouseEnter(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out _, out Color color, out _, out _);
-            if (!loading)
-                SongsBttn.ForeColor = color;
+            SongsBttn.ForeColor = color;
         }
 
         private void Button2_MouseEnter(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out _, out Color color, out _, out _);
-            if (!loading)
-                BrowseBttn.ForeColor = color;
+            BrowseBttn.ForeColor = color;
         }
 
         private void SettingsBttn_MouseEnter(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out _, out Color color, out _, out _);
-            if (!loading)
-                SettingsBttn.ForeColor = color;
+            SettingsBttn.ForeColor = color;
         }
 
         private void BackBttn_MouseEnter(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out _, out Color color, out _, out _);
-            if (!loading)
-                BackBttn.ForeColor = color;
+            BackBttn.ForeColor = color;
+        }
+
+        private void OpenCurrentFldrBttn_MouseEnter(object sender, EventArgs e)
+        {
+            GetColorsForTheme(currentTheme, out _, out _, out Color color, out _, out _);
+            OpenCurrentFldrBttn.ForeColor = color;
         }
 
         private void MediaPlayerBttn_MouseLeave(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out Color color, out _, out _, out _);
-            if (!loading)
-                MediaPlayerBttn.ForeColor = color;
+            MediaPlayerBttn.ForeColor = color;
         }
 
         private void SongsBttn_MouseLeave(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out Color color, out _, out _, out _);
-            if (!loading)
-                SongsBttn.ForeColor = color;
+            SongsBttn.ForeColor = color;
         }
 
         private void Button2_MouseLeave(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out Color color, out _, out _, out _);
-            if (!loading)
-                BrowseBttn.ForeColor = color;
+            BrowseBttn.ForeColor = color;
         }
 
         private void SettingsBttn_MouseLeave(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out Color color, out _, out _, out _);
-            if (!loading)
-                SettingsBttn.ForeColor = color;
+            SettingsBttn.ForeColor = color;
         }
 
         private void BackBttn_MouseLeave(object sender, EventArgs e)
         {
             GetColorsForTheme(currentTheme, out _, out Color color, out _, out _, out _);
-            if (!loading)
-                BackBttn.ForeColor = color;
+            BackBttn.ForeColor = color;
+        }
+
+        private void OpenCurrentFldrBttn_MouseLeave(object sender, EventArgs e)
+        {
+            GetColorsForTheme(currentTheme, out _, out Color color, out _, out _, out _);
+            OpenCurrentFldrBttn.ForeColor = color;
         }
 
         #endregion changeButtonColours
-
     }
 }

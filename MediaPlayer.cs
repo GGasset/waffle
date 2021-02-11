@@ -57,6 +57,19 @@ namespace Spotifly
                 CurrentMediaTxtBox.Text = GetCurrentMediaName();
         }
 
+        private void PlayFileInUnshuffled(int index)
+        {
+            try
+            {
+                string[] unshuffled;
+                GetFilteredFilesAndFolders(folderPath, out unshuffled, out _);
+                PlayFile(unshuffled[index]);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
 
         private void PlayFile(string URL)
         {
@@ -75,6 +88,7 @@ namespace Spotifly
             {
                 if (URL != axWindowsMediaPlayer.URL)
                 {
+                    currentUrlFolder = URL.Remove(URL.LastIndexOf('\\'));
                     axWindowsMediaPlayer.URL = URL;
                     axWindowsMediaPlayer.Ctlcontrols.currentPosition = 0;
                     axWindowsMediaPlayer.Ctlcontrols.play();
@@ -117,14 +131,15 @@ namespace Spotifly
             return url;
         }
 
-        private void CheckPlaylistIndex()
+        private int CheckPlaylistIndex()
         {
             for (int i = 0; i < urlPlaylist.Length; i++)
                 if (urlPlaylist[i] == axWindowsMediaPlayer.URL)
                 {
                     playlistIndex = i;
-                    return;
+                    return i;
                 }
+            return playlistIndex;
         }
 
         private void AxWindowsMediaPlayer_DoubleClickEvent(object sender, AxWMPLib._WMPOCXEvents_DoubleClickEvent e)

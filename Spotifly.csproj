@@ -150,7 +150,6 @@
     <Compile Include="Settings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Settings1.cs" />
     <Compile Include="Theme.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -183,7 +182,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Spotifly_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
